@@ -1,0 +1,29 @@
+application:
+  name: chess
+  version: 0.0.1
+  module: users
+
+server:
+  port: 9890
+  timeZone: Europe/Madrid
+  servlet:
+    context-path: /chess
+    apiPath: /api/v1
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+      force-response: true
+
+spring:
+  application.name: chess
+  mvc.servlet.path: /api/v1
+  profiles:
+    active: @spring.profiles.active@
+  config:
+    import:
+      - application-base.yaml
+      - application-flyway.yaml
+      - application-security.yaml
+      - application-mail.yaml
+      - application-@spring.profiles.active@.yaml
