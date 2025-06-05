@@ -1,11 +1,11 @@
 package org.barrikeit.chess.service;
 
 import lombok.extern.log4j.Log4j2;
-import org.barrikeit.chess.core.domain.Role;
-import org.barrikeit.chess.core.repository.RoleRepository;
 import org.barrikeit.chess.core.service.GenericService;
 import org.barrikeit.chess.core.service.dto.RoleDto;
 import org.barrikeit.chess.core.service.mapper.RoleMapper;
+import org.barrikeit.chess.domain.entities.Role;
+import org.barrikeit.chess.domain.repository.RoleRepository;
 import org.springframework.stereotype.Service;
 
 @Log4j2

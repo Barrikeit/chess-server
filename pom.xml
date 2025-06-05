@@ -25,10 +25,19 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.barrikeit.chess</groupId>
+            <groupId>org.barrikeit</groupId>
             <artifactId>chess-core</artifactId>
+            <version>${app.version}</version>
             <type>jar</type>
         </dependency>
+
+        <dependency>
+            <groupId>org.barrikeit</groupId>
+            <artifactId>chess-security</artifactId>
+            <version>${app.version}</version>
+            <type>jar</type>
+        </dependency>
+
     </dependencies>
 
     <build>

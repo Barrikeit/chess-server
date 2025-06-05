@@ -2,8 +2,8 @@ package org.barrikeit.chess.controller;
 
 import lombok.extern.log4j.Log4j2;
 import org.barrikeit.chess.core.controller.GenericController;
-import org.barrikeit.chess.core.domain.User;
 import org.barrikeit.chess.core.service.dto.UserDto;
+import org.barrikeit.chess.domain.entities.User;
 import org.barrikeit.chess.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
