@@ -23,6 +23,10 @@
         <spring.version>6.2.0</spring.version>
     </properties>
 
+    <build>
+        <finalName>chess-server</finalName>
+    </build>
+
     <dependencies>
         <dependency>
             <groupId>org.barrikeit</groupId>
@@ -37,10 +41,5 @@
             <version>${app.version}</version>
             <type>jar</type>
         </dependency>
-
     </dependencies>
-
-    <build>
-        <finalName>chess-http</finalName>
-    </build>
 </project>
