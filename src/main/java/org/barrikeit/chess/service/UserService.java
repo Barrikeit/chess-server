@@ -10,8 +10,8 @@ import org.barrikeit.chess.core.util.TimeUtil;
 import org.barrikeit.chess.core.util.constants.ExceptionConstants;
 import org.barrikeit.chess.core.util.exceptions.BadRequestException;
 import org.barrikeit.chess.core.util.exceptions.NotFoundException;
-import org.barrikeit.chess.domain.entities.Role;
-import org.barrikeit.chess.domain.entities.User;
+import org.barrikeit.chess.domain.model.Role;
+import org.barrikeit.chess.domain.model.User;
 import org.barrikeit.chess.domain.repository.RoleRepository;
 import org.barrikeit.chess.domain.repository.UserRepository;
 import org.springframework.security.core.Authentication;
@@ -82,8 +82,8 @@ public class UserService extends GenericService<User, Long, UserDto> {
   public UserDto save(UserDto dto) {
     User user = validateUserToCreateUpdate(dto, true);
     generateUserForCreateUpdate(dto, user);
-    user.setUsername(dto.getUsername());
-    user.setPassword(passwordEncoder.encode(dto.getPassword()));
+    user.setUsername(dto.username());
+    user.setPassword(passwordEncoder.encode(dto.password()));
     user.setLoginDate(TimeUtil.localDateTimeNow());
     mapper.updateEntity(dto, user);
 
@@ -109,11 +109,11 @@ public class UserService extends GenericService<User, Long, UserDto> {
   public UserDto toggleActivationUser(UserDto dto) {
     validateToggleActivationUser(dto, false);
     User user = validateUserToCreateUpdate(dto, false);
-    user.setEnabled(!dto.isEnabled());
+    user.setEnabled(!dto.enabled());
     // user.setDisabledReason(dto.getDisabledReason());
 
     repository.save(user);
-    sendEmail(user, Boolean.FALSE.equals(dto.isEnabled()) ? "ENABLE_USER" : "DISABLE_USER");
+    sendEmail(user, !dto.enabled() ? "ENABLE_USER" : "DISABLE_USER");
     return mapper.toDto(user);
   }
 
@@ -134,31 +134,30 @@ public class UserService extends GenericService<User, Long, UserDto> {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String authenticatedUser = authentication.getName();
 
-    if (dto.getUsername().equals(authenticatedUser)
-        && ((isUpdate && Boolean.FALSE.equals(dto.isEnabled()))
-            || (!isUpdate && Boolean.TRUE.equals(dto.isEnabled())))) {
+    if (dto.username().equals(authenticatedUser)
+        && ((isUpdate && !dto.enabled()) || (!isUpdate && dto.enabled()))) {
       throw new BadRequestException(
-          ExceptionConstants.ERROR_USER_DEACTIVATE_HIMSELF, dto.getUsername());
+          ExceptionConstants.ERROR_USER_DEACTIVATE_HIMSELF, dto.username());
     }
   }
 
   private User validateUserName(UserDto dto, boolean isCreate) {
-    User user = repository.findByUsernameEqualsIgnoreCase(dto.getUsername()).orElse(new User());
+    User user = repository.findByUsernameEqualsIgnoreCase(dto.username()).orElse(new User());
     if (isCreate && !user.isNew()) {
       throw new BadRequestException(
-          ExceptionConstants.ERROR_USER_NAME_ALREADY_EXISTS, dto.getUsername());
+          ExceptionConstants.ERROR_USER_NAME_ALREADY_EXISTS, dto.username());
     } else if (!isCreate && user.isNew()) {
-      throw new BadRequestException(ExceptionConstants.NOT_FOUND, dto.getUsername());
+      throw new BadRequestException(ExceptionConstants.NOT_FOUND, dto.username());
     }
     return user;
   }
 
   private void validateMail(UserDto dto) {
     if (repository
-        .findByUsernameEqualsIgnoreCaseAndEmailEqualsIgnoreCase(dto.getUsername(), dto.getEmail())
+        .findByUsernameEqualsIgnoreCaseAndEmailEqualsIgnoreCase(dto.username(), dto.email())
         .isEmpty()) {
       throw new BadRequestException(
-          ExceptionConstants.ERROR_USER_EMAIL_ALREADY_EXISTS, dto.getEmail());
+          ExceptionConstants.ERROR_USER_EMAIL_ALREADY_EXISTS, dto.email());
     }
   }
 
@@ -168,13 +167,13 @@ public class UserService extends GenericService<User, Long, UserDto> {
   }
 
   private void validateRol(UserDto dto, User user) {
-    if (!dto.getRoles().isEmpty()) {
+    if (!dto.roles().isEmpty()) {
       Set<Role> roles =
-          dto.getRoles().stream()
+          dto.roles().stream()
               .map(
                   role ->
                       roleRepository
-                          .findByCode(role.getCode())
+                          .findByCode(role.code())
                           .orElseThrow(
                               () -> new NotFoundException(ExceptionConstants.NOT_FOUND, role)))
               .collect(Collectors.toSet());
